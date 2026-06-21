@@ -1,7 +1,13 @@
-"""Interactive authorization helper for the userbot."""
+"""Authorization helper for the userbot.
+
+Supports two modes:
+1. Interactive (default): prompts for the confirmation code via stdin.
+2. Non-interactive: set PHONE_CODE env var to provide the code directly.
+"""
 
 import asyncio
 import logging
+import os
 
 from pyrogram import Client
 
@@ -12,12 +18,18 @@ logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    logger.info("Starting interactive authorization for %s", PHONE_NUMBER or "unknown phone")
+    phone_code = os.environ.get("PHONE_CODE")
+    logger.info(
+        "Starting authorization for %s (mode=%s)",
+        PHONE_NUMBER or "unknown phone",
+        "non-interactive" if phone_code else "interactive",
+    )
     client = Client(
         name=str(DATA_DIR / SESSION_NAME),
         api_id=API_ID,
         api_hash=API_HASH,
         phone_number=PHONE_NUMBER or None,
+        phone_code=phone_code,
         workdir=str(DATA_DIR),
     )
     await client.start()
