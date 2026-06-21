@@ -1,0 +1,19 @@
+services:
+  userbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: paperclip-userbot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+    ports:
+      - "127.0.0.1:8700:8000"
+    networks:
+      - paperclip-userbot-net
+
+networks:
+  paperclip-userbot-net:
+    driver: bridge
