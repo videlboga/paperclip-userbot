@@ -12,13 +12,23 @@ Useful for E2E testing of Telegram bots.
 
 ## First run / auth
 
-The userbot needs to authorize once with Telegram:
+The userbot needs to authorize once with Telegram. Interactive mode will prompt for
+`api_id`, `api_hash`, phone number and confirmation code:
 
 ```bash
-docker compose run --rm userbot python -m paperclip_userbot.auth
+docker compose run --rm -it userbot python -m paperclip_userbot.auth
 ```
 
-It will prompt for the phone code sent to +799...240.
+You can also pass them via environment variables:
+
+```bash
+docker compose run --rm \
+  -e API_ID=your_api_id \
+  -e API_HASH=your_api_hash \
+  -e PHONE_NUMBER=+799...240 \
+  -e PHONE_CODE=12345 \
+  userbot python -m paperclip_userbot.auth
+```
 
 After authorization, `paperclip_userbot.session` is created. Keep it in the bind-mounted `data/` directory.
 

@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import os
 from typing import Optional
 
 from pyrogram import Client, filters
@@ -21,14 +22,23 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=getattr(logging, LOG_LEVEL.upper(), logging.INFO))
 
 
+def _api_credentials() -> tuple[int, str]:
+    api_id = API_ID or int(os.environ.get("API_ID", "0"))
+    api_hash = API_HASH or os.environ.get("API_HASH", "")
+    if not api_id or not api_hash:
+        raise RuntimeError("API_ID and API_HASH must be set in .env or environment")
+    return api_id, api_hash
+
+
 class Userbot:
     """Shared Pyrogram client + in-memory message sink for wait operations."""
 
     def __init__(self) -> None:
+        api_id, api_hash = _api_credentials()
         self.client = Client(
             name=str(DATA_DIR / SESSION_NAME),
-            api_id=API_ID,
-            api_hash=API_HASH,
+            api_id=api_id,
+            api_hash=api_hash,
             phone_number=PHONE_NUMBER or None,
             no_updates=False,
             workdir=str(DATA_DIR),
